@@ -36,12 +36,12 @@ namespace LinSMP1
 
         public string GetDescription()
         {
-            return Convert.ToString(courseName + " (" + courseCode + ")");
+            return String.Format(courseName + " (" + courseCode + ")");
         }
 
         public string GetFullDetails()
         {
-            return Convert.ToString(courseName + " (" + courseCode + "): " + studentMark + "%");
+            return String.Format(courseName + " (" + courseCode + "): " + studentMark + "%");
         }
     }
 }
