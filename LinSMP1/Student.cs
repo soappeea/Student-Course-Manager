@@ -44,7 +44,6 @@ namespace LinSMP1
 
         public string GetDetails()
         {
-            //string details = Convert.ToString(lName + ", " + fName + " (" + studentID + ")");
             return String.Format(lName + ", " + fName + " (" + studentID + ")");
         }
 
@@ -65,7 +64,6 @@ namespace LinSMP1
             //need to validate course before adding
             if (courses.Count < maxCourses)
             {
-                //MAKE MAX COURSES VARIABLE, only need default constructor; refer to encapsulationday1c
                 courses.Add(course);
             }
         }
