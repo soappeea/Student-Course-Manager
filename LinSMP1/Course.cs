@@ -41,7 +41,7 @@ namespace LinSMP1
 
         public string GetFullDetails()
         {
-            return String.Format(courseName + " (" + courseCode + "): " + studentMark + "%");
+            return String.Format(GetDescription() + ": " + studentMark + "%");
         }
     }
 }

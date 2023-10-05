@@ -50,14 +50,19 @@ namespace LinSMP1
         public string GetCourseDisplay()
         {
             StringBuilder sb = new StringBuilder();
-            //store in string
+
             for (int i = 0; i < courses.Count; i++)
             {
-                sb.AppendLine(courses[i].GetFullDetails());
+                sb.AppendLine((i + 1) + ") " + courses[i].GetFullDetails());
             }
 
             return sb.ToString();
         }
+
+        //public string GetTotalCourseDisplay()
+        //{
+        //    String
+        //}
 
         public void AddCourse(Course course)
         {
@@ -92,6 +97,7 @@ namespace LinSMP1
             //return result;
         }
 
+        //WIP
         public bool HasCourse(string courseName)
         {
             for (int i = 0; i < courses.Count; i++)
