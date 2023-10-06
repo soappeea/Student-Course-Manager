@@ -1,9 +1,14 @@
-﻿using System;
+﻿// Author: Sophia Lin
+// File Name: Program.cs
+// Project Name: Student Course Manager
+// Creation Date: October 1, 2023
+// Modified Date: October 5, 2023
+// Description: This program is built to manage students and their courses in school
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using System.Windows.Forms;
 
 namespace LinSMP1
 {
@@ -25,6 +30,10 @@ namespace LinSMP1
         const int ADD_COURSE = 1;
         const int REMOVE_COURSE = 2;
         const int RETURN_MENU = 3;
+
+        //GENERAL DISPLAY
+        const int MAIN_MENU = 1;
+        const int STUDENT_MENU = 2;
 
         private static void Main(string[] args)
         {
@@ -52,69 +61,78 @@ namespace LinSMP1
 
         private static int DisplayMenu()
         {
-            int option = NO_OPTION;
-
-            while (option == NO_OPTION)
-            {
-                Console.Clear();
-                Console.WriteLine("Student Manager\n======================\n");
-                Console.WriteLine("1. Add a Student");
-                Console.WriteLine("2. Remove a Student");
-                Console.WriteLine("3. Display Student Data");
-                Console.WriteLine("4. Exit\n");
-                Console.Write("Choose an option: ");
-
-                //Error handle if out of range for menu
-                Int32.TryParse(Console.ReadLine(), out option);
-
-                if (option == NO_OPTION || option > 4 || option < 1)
-                {
-                    Console.WriteLine("Invalid menu option.\nPress ENTER to continue.");
-                    Console.ReadLine();
-                }
-                else if (students.Count <= 0 && (option == REMOVE || option == DISPLAY))
-                {
-                    Console.WriteLine("No students found\nPress ENTER to continue.");
-                    Console.ReadLine();
-                    option = NO_OPTION;
-                }
-            }
-
-            return option;
+            return DisplayGeneralMenu(MAIN_MENU, 1, 4, 0);
         }
 
-        private static int DisplayStudentMenu(int studentIndex)
+        private static int DisplayGeneralMenu(int menuScreen, int indexMin, int indexMax, int studentIndex)
         {
             int option = NO_OPTION;
             int currentLineCursor = Console.CursorTop;
 
             while (option == NO_OPTION)
             {
-                ClearLines(currentLineCursor, 11);
-                //Console.Clear();
-                Console.WriteLine("Student Menu\n======================\n");
-                Console.WriteLine("1. Add a Course");
-                Console.WriteLine("2. Remove a Course");
-                Console.WriteLine("3. Return to Menu\n");
+                switch (menuScreen)
+                {
+                    case MAIN_MENU:
+                        Console.Clear();
+                        Console.WriteLine("Student Manager\n======================\n");
+                        Console.WriteLine("1. Add a Student");
+                        Console.WriteLine("2. Remove a Student");
+                        Console.WriteLine("3. Display Student Data");
+                        Console.WriteLine("4. Exit\n");
+                        break;
+                    case STUDENT_MENU:
+                        ClearLines(currentLineCursor, 11);
+                        Console.WriteLine("Student Menu\n======================\n");
+                        Console.WriteLine("1. Add a Course");
+                        Console.WriteLine("2. Remove a Course");
+                        Console.WriteLine("3. Return to Menu\n");
+                        break;
+                }
+
                 Console.Write("Choose an option: ");
 
-                //Error handle if out of range for menu
                 Int32.TryParse(Console.ReadLine(), out option);
 
-                if (option == NO_OPTION || option > 3 || option < 1)
+
+                if (option == NO_OPTION || option > indexMax || option < indexMin)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid menu option.\nPress ENTER to continue.");
                     Console.ReadLine();
+                    Console.ResetColor();
                 }
-                else if (students[studentIndex].GetCourseCount() <= 0 && option == REMOVE_COURSE)
+
+                switch (menuScreen)
                 {
-                    Console.WriteLine("No courses found\nPress ENTER to continue.");
-                    option = NO_OPTION;
-                    Console.ReadLine();
+                    case MAIN_MENU:
+                        if (students.Count <= 0 && (option == REMOVE || option == DISPLAY))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("No students found\nPress ENTER to continue.");
+                            Console.ReadLine();
+                            option = NO_OPTION;
+                            Console.ResetColor();
+                        }
+                        break;
+                    case STUDENT_MENU:
+                        if (students[studentIndex].GetCourseCount() <= 0 && option == REMOVE_COURSE)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("No courses found\nPress ENTER to continue.");
+                            option = NO_OPTION;
+                            Console.ReadLine();
+                            Console.ResetColor();
+                        }
+                        break;
                 }
             }
 
             return option;
+        }
+        private static int DisplayStudentMenu(int studentIndex)
+        {
+            return DisplayGeneralMenu(STUDENT_MENU, 1, 3, studentIndex);
         }
 
         private static Student CreateStudent(string fName, string lName)
@@ -129,13 +147,10 @@ namespace LinSMP1
         {
             int index = NO_OPTION;
 
-            //ask for a student index if there is at least one student
             if (students.Count > 0)
             {
                 while (index <= NO_OPTION || index > students.Count)
                 {
-                    Console.Clear();
-
                     for (int i = 0; i < students.Count; i++)
                     {
                         Console.WriteLine((i + 1) + ". " + students[i].GetDetails());
@@ -144,14 +159,14 @@ namespace LinSMP1
                     Console.WriteLine("");
                     Console.Write("Choose a student by the index on the left: ");
 
-                    //Retrieve the option and attempt to convert it to an int
                     Int32.TryParse(Console.ReadLine(), out index);
 
-                    //Give failure feedback for impossible entries
                     if (index <= NO_OPTION || index > students.Count)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Sorry, that is an invalid index.\nPress ENTER to continue.");
                         Console.ReadLine();
+                        Console.ResetColor(); 
                     }
                 }
             }
@@ -162,7 +177,7 @@ namespace LinSMP1
 
         private static void AddNewCourse(int studentIndex)
         {
-            int courseChoice = ChooseNewCourse();
+            int courseChoice = ChooseNewCourse(studentIndex);
             int courseMark = -1;
 
             while (courseMark < 0 || courseMark > 100)
@@ -184,7 +199,7 @@ namespace LinSMP1
             students[studentIndex].AddCourse(new Course(courseChoice, courseMark));
             Console.WriteLine("New Course Added.\nPress ENTER to continue.");
         }
-        
+
         private static void RemoveCourse(int studentIndex)
         {
             int courseChoice = NO_OPTION;
@@ -214,7 +229,7 @@ namespace LinSMP1
             Console.WriteLine("Course successfully removed!\nPress ENTER to continue.");
         }
 
-        private static int ChooseNewCourse()
+        private static int ChooseNewCourse(int studentIndex)
         {
             int courseChoice = NO_OPTION;
             int currentLineCursor = Console.CursorTop;
@@ -232,12 +247,18 @@ namespace LinSMP1
 
                 Console.Write("");
                 Console.Write("Choose a course to add: ");
-                //Error handle if out of range for menu
+
                 Int32.TryParse(Console.ReadLine(), out courseChoice);
 
-                if (courseChoice == NO_OPTION || courseChoice >  courseNames.Length || courseChoice < 1)
+                if (courseChoice == NO_OPTION || courseChoice > courseNames.Length || courseChoice < 1)
                 {
                     Console.WriteLine("Invalid menu option.\nPress ENTER to continue.");
+                    Console.ReadLine();
+                    courseChoice = NO_OPTION;
+                }
+                else if (HasCourse(studentIndex, courseChoice - 1) == true)
+                {
+                    Console.WriteLine("Student already has this course.\nPress ENTER to continue.");
                     Console.ReadLine();
                     courseChoice = NO_OPTION;
                 }
@@ -248,12 +269,10 @@ namespace LinSMP1
 
         private static void ClearLines(int currentLineCursor, int lines)
         {
-            //Store how many lines to clear in console
             int consoleLines = lines;
 
             Console.SetCursorPosition(0, currentLineCursor);
 
-            //Clear the lines
             for (int i = 0; i < consoleLines; i++)
             {
                 Console.Write(new string(' ', Console.WindowWidth));
@@ -266,7 +285,7 @@ namespace LinSMP1
         {
             string lName = "";
             string fName = "";
-            Console.WriteLine("ADD STUDENT\n===============");
+            Console.WriteLine("ADD STUDENT\n===============\n");
 
             int currentLineCursor = Console.CursorTop;
 
@@ -298,13 +317,11 @@ namespace LinSMP1
                 }
             }
 
-
             students.Add(CreateStudent(lName, fName));
         }
 
         private static void RemoveStudent(int studentIndex)
         {
-            Console.Clear();
             students.RemoveAt(studentIndex);
             Console.WriteLine("Remove succeeded\nPress ENTER to continue.");
             Console.ReadLine();
@@ -315,14 +332,11 @@ namespace LinSMP1
             int option = NO_OPTION;
             while (option != RETURN_MENU)
             {
-                Console.Clear();
                 Console.WriteLine(students[studentIndex].GetDetails());
                 Console.WriteLine(students[studentIndex].GetCourseDisplay());
                 Console.WriteLine("");
 
-           
                 option = DisplayStudentMenu(studentIndex);
-                
 
                 switch (option)
                 {
@@ -330,11 +344,13 @@ namespace LinSMP1
                         Console.Clear();
                         AddNewCourse(studentIndex);
                         Console.ReadLine();
+                        Console.Clear();
                         break;
                     case REMOVE_COURSE:
                         Console.Clear();
                         RemoveCourse(studentIndex);
                         Console.ReadLine();
+                        Console.Clear();
                         break;
                 }
             }
@@ -342,6 +358,7 @@ namespace LinSMP1
 
         private static void StudentSelection(int choice)
         {
+            Console.WriteLine("STUDENT SELECTION\n=================\n");
             int studentIndex = ChooseStudent();
 
             if (studentIndex >= 0)
@@ -358,11 +375,11 @@ namespace LinSMP1
             }
         }
 
-        //WIP
         private static bool HasCourse(int studentIndex, int courseIndex)
         {
             return students[studentIndex].HasCourse(courseNames[courseIndex]);
         }
+
         private static string ParseStudentID()
         {
             return totalAdded.ToString().PadLeft(8, '0');

@@ -59,14 +59,8 @@ namespace LinSMP1
             return sb.ToString();
         }
 
-        //public string GetTotalCourseDisplay()
-        //{
-        //    String
-        //}
-
         public void AddCourse(Course course)
         {
-            //need to validate course before adding
             if (courses.Count < maxCourses)
             {
                 courses.Add(course);
@@ -82,41 +76,19 @@ namespace LinSMP1
             }
 
             return false;
-
-            //need to validate courseIndex before removing
-            //if (courseIndex >= 0 && StudentManager.CourseCodes.Length >= courseIndex)
-            //{
-            //    //find course and remove if exists
-            //    var courseCodeToRemove = this.courses.FirstOrDefault(x => x.GetCode() == StudentManager.CourseCodes[courseIndex]);
-            //    if (courseCodeToRemove != null)
-            //    {
-            //        this.courses.Remove(courseCodeToRemove);
-            //        result = true;
-            //    }
-            //}
-            //return result;
         }
 
-        //WIP
         public bool HasCourse(string courseName)
         {
             for (int i = 0; i < courses.Count; i++)
             {
-                if (courses[i].Equals(courseName))
+                if (courses[i].GetName().Equals(courseName))
                 {
                     return true;
                 }
             }
 
             return false;
-
-            //bool result = false;
-            //var courseCodeToFind = this.courses.FirstOrDefault(x => x.GetName().Equals(courseName, StringComparison.OrdinalIgnoreCase));
-            //if (courseCodeToFind != null)
-            //{
-            //    result = true;
-            //}
-            //return result;
         }
     }
 }
