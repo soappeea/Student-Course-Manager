@@ -90,5 +90,15 @@ namespace LinSMP1
 
             return false;
         }
+
+        public bool RestrictCourses()
+        {
+            if (courses.Count < maxCourses)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
